@@ -1,0 +1,19 @@
+# Virtual environment
+customer categorizer/
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Model files
+*.pkl
+*.joblib
