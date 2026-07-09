@@ -17,3 +17,5 @@ __pycache__/
 # Model files
 *.pkl
 *.joblib
+
+.env
