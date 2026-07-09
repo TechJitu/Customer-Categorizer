@@ -156,6 +156,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+customer categorizer/
 
 # Spyder project settings
 .spyderproject
@@ -216,6 +217,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-
-.customer categorizer
