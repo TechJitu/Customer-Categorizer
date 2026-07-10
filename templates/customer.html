@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+</head>
+
+<body>
+
+<nav class="navbar navbar-light bg-light">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">
+            Customer Segmentation
+        </span>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4">
+        Customer Segmentation
+    </h2>
+
+    <form>
+
+        <div class="mb-3">
+            <label class="form-label">Age</label>
+            <input
+                type="number"
+                class="form-control"
+                placeholder="Customer Age">
+        </div>
+
+        <button class="btn btn-primary">
+            Predict Customer Cluster
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
