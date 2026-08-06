@@ -9,10 +9,12 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, PowerTransformer
-from src.components.data_ingestion import DataIngestion
-from src.components.data_ingestion import DataIngestion
+
 from src.entity.config_entity import DataTransformationConfig
 from src.entity.artifact_entity import DataTransformationArtifact, DataIngestionArtifact, DataValidationArtifact
+from src.components.data_ingestion import DataIngestion
+from src.components.data_clustering import CreateClusters
+from src.constant.training_pipeline import TARGET_COLUMN
 from src.entity.config_entity import SimpleImputerConfig
 from src.exception import CustomerException
 from src.logger import logging
@@ -106,17 +108,21 @@ class DataTransformation:
                 "Web","Catalog","Store","Discount Purchases","Total Promo",
                 "NumWebVisitsMonth"]]
             
-            if key == "train_set":
-                train_set_with_new_features = dataset
+            if key == 'train_set':
+                train_set_with_new_features = pd.concat([train_set_with_new_features, dataset])
             else:
-                test_set_with_new_features = dataset        
+                test_set_with_new_features = pd.concat([test_set_with_new_features, dataset])
+        
         logging.info("New features has been created.")
         return train_set_with_new_features, test_set_with_new_features
+                
+    
+
 
     def transform_data(self,train_set:DataFrame, test_set:DataFrame) -> DataFrame:
         """
         Method Name :   transform_data
-        Description :   This func applies feature transformation and other feature
+        Description :   This method applies feature transformation and other feature
                         engineering operations and returns train and test datasets. 
         
         Output      :   data transformer object is created and returned 
@@ -189,7 +195,8 @@ class DataTransformation:
             raise CustomerException(e, sys) from e
 
     def initiate_data_transformation(self) :
-        """Method Name :   initiate_data_transformation
+        """
+        Method Name :   initiate_data_transformation
         Description :   This method initiates the data transformation component for the pipeline 
         
         Output      :   data transformer object is created and returned 
