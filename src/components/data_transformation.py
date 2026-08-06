@@ -106,11 +106,10 @@ class DataTransformation:
                 "Web","Catalog","Store","Discount Purchases","Total Promo",
                 "NumWebVisitsMonth"]]
             
-            if key == 'train_set':
-                train_set_with_new_features = pd.concat([train_set_with_new_features, dataset])
+            if key == "train_set":
+                train_set_with_new_features = dataset
             else:
-                test_set_with_new_features = pd.concat([test_set_with_new_features, dataset])
-        
+                test_set_with_new_features = dataset        
         logging.info("New features has been created.")
         return train_set_with_new_features, test_set_with_new_features
                 
