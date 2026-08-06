@@ -112,7 +112,79 @@ class DataTransformation:
                 test_set_with_new_features = dataset        
         logging.info("New features has been created.")
         return train_set_with_new_features, test_set_with_new_features
-                
-    
 
+    def transform_data(self,train_set:DataFrame, test_set:DataFrame) -> DataFrame:
+        """
+        Method Name :   transform_data
+        Description :   This func applies feature transformation and other feature
+                        engineering operations and returns train and test datasets. 
+        
+        Output      :   data transformer object is created and returned 
+        On Failure  :   Write an exception log and then raise an exception
+        
+        Version     :   1.2
+        Revisions   :   moved setup to cloud
+        """
+        logging.info(
+            "Entered get_data_transformer_object method of DataTransformation class"
+        )
+
+        try:
+            logging.info("Got numerical cols from schema config")
+            
+            
+            numeric_features = [feature for feature in train_set.columns if train_set[feature].dtype != 'O']
+
+
+            outlier_features = ["Wines","Fruits","Meat","Fish","Sweets","Gold","Age","Total_Spending"]
+            numeric_features = [x for x in numeric_features if x not in outlier_features]
+
+ 
+
+            logging.info("Initialized StandardScaler, SimpleImputer")
+
+            numeric_pipeline = Pipeline(steps=
+                                        [("Imputer", SimpleImputer(**self.imputer_config.__dict__)), 
+                                         ("StandardScaler", StandardScaler())]
+            )
+            
+            outlier_features_pipeline = Pipeline(steps=
+                                                 [("Imputer", SimpleImputer(**self.imputer_config.__dict__)),
+                                                  ("transformer", PowerTransformer(standardize=True))]
+            )
+
+            preprocessor = ColumnTransformer(
+                [
+                    ("numeric pipeline",numeric_pipeline, numeric_features),
+                    ("Outliers Features Pipeline", outlier_features_pipeline, outlier_features)
+            ]
+            )
+            
+          
+            
+
+            
+            
+            preprocessed_train_set = preprocessor.fit_transform(train_set)
+            preprocessed_test_set = preprocessor.transform(test_set)
+            
+            
+            columns = train_set.columns
+            preprocessed_train_set =  pd.DataFrame(preprocessed_train_set, columns=columns)
+            preprocessed_test_set = pd.DataFrame(preprocessed_test_set, columns=columns)
+            
+            preprocessor_obj_dir = os.path.dirname(self.data_transformation_config.transformed_object_file_path)
+            os.makedirs(preprocessor_obj_dir, exist_ok=True)
+            self.utils.save_object(self.data_transformation_config.transformed_object_file_path , preprocessor)
+            logging.info("Saved Preprocessor object to {}".format(preprocessor_obj_dir))
+
+
+            logging.info(
+                "Exited get_data_transformer_object method of DataTransformation class"
+            )
+
+            return preprocessed_train_set, preprocessed_test_set
+
+        except Exception as e:
+            raise CustomerException(e, sys) from e
 
