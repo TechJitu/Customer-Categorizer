@@ -9,7 +9,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, PowerTransformer
-
+from src.components.data_ingestion import DataIngestion
+from src.components.data_ingestion import DataIngestion
 from src.entity.config_entity import DataTransformationConfig
 from src.entity.artifact_entity import DataTransformationArtifact, DataIngestionArtifact, DataValidationArtifact
 from src.entity.config_entity import SimpleImputerConfig
@@ -27,6 +28,7 @@ class DataTransformation:
         self.data_ingestion_artifact = data_ingestion_artifact
         self.data_validation_artifact = data_validation_artifact
         self.data_transformation_config = data_tranasformation_config
+        self.data_ingestion = DataIngestion()
 
         self.imputer_config = SimpleImputerConfig()
 
