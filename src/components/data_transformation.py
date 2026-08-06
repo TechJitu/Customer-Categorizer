@@ -188,3 +188,69 @@ class DataTransformation:
         except Exception as e:
             raise CustomerException(e, sys) from e
 
+    def initiate_data_transformation(self) :
+        """Method Name :   initiate_data_transformation
+        Description :   This method initiates the data transformation component for the pipeline 
+        
+        Output      :   data transformer object is created and returned 
+        On Failure  :   Write an exception log and then raise an exception
+        
+        Version     :   1.2
+        Revisions   :   moved setup to cloud
+        """
+        logging.info(
+            "Entered initiate_data_transformation method of Data_Transformation class"
+        )
+
+        try:
+            if self.data_validation_artifact.validation_status:
+                train_set = DataTransformation.read_data(file_path=self.data_ingestion_artifact.trained_file_path)
+                test_set = DataTransformation.read_data(file_path=self.data_ingestion_artifact.test_file_path)
+                train_set, test_set = self.get_new_features(train_set, test_set)
+
+
+                logging.info("Got the preprocessor object")
+                
+                preprocessed_train_set,  preprocessed_test_set  = self.transform_data(train_set, test_set)
+                
+                cluster_creator = CreateClusters()
+
+                labelled_train_set = cluster_creator.initialize_clustering(preprocessed_data=preprocessed_train_set)
+                labelled_test_set = cluster_creator.initialize_clustering(preprocessed_data=preprocessed_test_set)
+                
+                
+                
+                X_train = labelled_train_set.drop(columns=[TARGET_COLUMN], axis=1)
+                y_train = labelled_train_set[TARGET_COLUMN]
+                
+                X_test = labelled_test_set.drop(columns=[TARGET_COLUMN], axis=1)
+                y_test = labelled_test_set[TARGET_COLUMN]
+                
+                train_arr = np.c_[
+                    np.array(X_train), np.array(y_train)
+                ]
+                
+                test_arr = np.c_[
+                    np.array(X_test), np.array(y_test)
+                ]
+                
+                self.utils.save_numpy_array_data(self.data_transformation_config.transformed_train_file_path, array=train_arr)
+                self.utils.save_numpy_array_data(self.data_transformation_config.transformed_test_file_path, array=test_arr)
+
+                
+                data_transformation_artifact = DataTransformationArtifact(
+                    transformed_object_file_path=self.data_transformation_config.transformed_object_file_path,
+                    transformed_train_file_path=self.data_transformation_config.transformed_train_file_path,
+                    transformed_test_file_path=self.data_transformation_config.transformed_test_file_path
+                )
+            
+            
+                return data_transformation_artifact
+            
+            else:
+                raise Exception("Data Validation Failed.")
+
+
+
+        except Exception as e:
+            raise CustomerException(e, sys) from e
