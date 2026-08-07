@@ -38,3 +38,34 @@ class CreateClusters:
         except Exception as e:
                 raise CustomerException(e,sys)
     
+    def initialize_clustering(self, preprocessed_data: DataFrame) -> DataFrame:
+        """
+        Method Name :   initialize_clustering
+        Description :   This method initiates the clustering process 
+        
+        Output      :   Data is clustered and the cluster names are used as lables to the preprocessed data and is returned.
+        On Failure  :   Write an exception log and then raise an exception
+        
+        Version     :   0.1
+        
+        """
+        try:
+            logging.info("Initializing clustering...")
+            
+            
+            reduced_dataset = self.get_dataset_using_pca(preprocessed_data)
+            
+            model = KMeans(n_clusters=3).fit(reduced_dataset)
+
+            preprocessed_data[TARGET_COLUMN] = model.labels_.astype(int)
+            
+            logging.info("Clustering is done")
+            
+            return preprocessed_data
+        
+        except Exception as e:
+            raise CustomerException(e,sys)
+
+
+
+        
